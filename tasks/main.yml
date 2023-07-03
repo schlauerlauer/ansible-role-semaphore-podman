@@ -1,2 +1,55 @@
 ---
 # tasks file for ansible-role-semaphore-podman
+
+- name: "Create directories"
+  file:
+    path: "{{ item }}"
+    state: "directory"
+  loop:
+    - "{{ base_dir }}/semaphore"
+    - "{{ base_dir }}/semaphore/pg_data"
+
+- name: "Copy semaphore env"
+  template:
+    force: yes
+    src: "semaphore.env.j2"
+    dest: "{{ base_dir }}/semaphore/semaphore.env"
+
+- name: "Create semaphore pod"
+  containers.podman.podman_pod:
+    name: "semaphore-pod"
+    state: "created"
+    infra_name: "semaphore-infra"
+    recreate: no
+    ports:
+      - "{{ semaphore_port }}:3000" # semaphore webui
+
+- name: "Run postgres container"
+  containers.podman.podman_container:
+    pod: "semaphore-pod"
+    name: "semaphore-postgres"
+    image: "docker.io/library/postgres:{{ postgres_version }}"
+    recreate: no
+    restart_policy: "no"
+    tty: no
+    detach: yes
+    state: "started"
+    env:
+      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      PGDATA: "/var/lib/postgresql/data"
+      POSTGRES_USER: "{{ postgres_username }}"
+      POSTGRES_DB: "{{ postgres_database }}"
+    volumes:
+      - "{{ base_dir}}/semaphore/pg_data:/var/lib/postgresql/data:rw,Z"
+
+- name: "Run semaphore ui container"
+  containers.podman.podman_container:
+    pod: "semaphore-pod"
+    name: "semaphore-ui"
+    image: "docker.io/semaphoreui/semaphore:{{ version_tag }}"
+    recreate: no
+    restart_policy: "no"
+    tty: no
+    detach: yes
+    state: "started"
+    env_file: "{{ base_dir }}/semaphore/semaphore.env"
