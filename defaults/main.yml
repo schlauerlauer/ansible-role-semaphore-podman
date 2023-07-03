@@ -1,2 +1,16 @@
 ---
 # defaults file for ansible-role-semaphore-podman
+
+version_tag: "v2.8.90"
+base_dir: "."
+
+semaphore_port: "3000"
+semaphore_admin_username: "admin"
+semaphore_admin_name: "admin admin"
+semaphore_admin_email: "admin@localhost"
+semaphore_admin_password: "CHANGE-THIS-smooth-wannabe-absurd-dreadful-saggy-gyration-sanctity-motive-android"
+
+postgres_password: "CHANGE-THIS-catering-material-staff-cornmeal-quiver-overboard-unworldly-playlist-polo"
+postgres_username: "semaphore"
+postgres_db: "semaphore"
+postgres_version: "15.3-alpine3.18"
