@@ -1,7 +1,7 @@
 ---
 # defaults file for ansible-role-semaphore-podman
 
-version_tag: "v2.8.90"
+version_tag: "v2.9.37"
 base_dir: "."
 
 semaphore_port: "3000"
@@ -9,8 +9,23 @@ semaphore_admin_username: "admin"
 semaphore_admin_name: "admin admin"
 semaphore_admin_email: "admin@localhost"
 semaphore_admin_password: "CHANGE-THIS-smooth-wannabe-absurd-dreadful-saggy-gyration-sanctity-motive-android"
+# replace this with the output of: head -c32 /dev/urandom | base64
+semaphore_access_key_encryption: "U8t4xFRbDvNaoZa7VX3aInypXLZBQbVx+HGh8B7Farc="
 
 postgres_password: "CHANGE-THIS-catering-material-staff-cornmeal-quiver-overboard-unworldly-playlist-polo"
 postgres_username: "semaphore"
 postgres_database: "semaphore"
 postgres_version: "15.3-alpine3.18"
+postgres_host: "127.0.0.1"
+postgres_port: "5432"
+
+semaphore_playbook_path: "/tmp/semaphore/"
+
+semaphore_ldap_activated: "no"
+semaphore_ldap_host: ""
+semaphore_ldap_port: "636"
+semaphore_ldap_needtls: "yes"
+semaphore_ldap_dn_bind: ""
+semaphore_ldap_password: ""
+semaphore_ldap_dn_search: ""
+semaphore_ldap_search_filter: ""
