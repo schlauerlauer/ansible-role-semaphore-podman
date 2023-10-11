@@ -53,3 +53,5 @@
     detach: yes
     state: "started"
     env_file: "{{ base_dir }}/semaphore/semaphore.env"
+
+# TODO add optional apk packages e.g. `apk add py3-boto3 py3-botocore`
