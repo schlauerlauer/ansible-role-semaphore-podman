@@ -1,6 +1,23 @@
 ---
 # tasks file for ansible-role-semaphore-podman
 
+- name: "Include secrets"
+  ansible.builtin.include_vars:
+    file: "{{ playbook_dir }}/inventory/{{ secrets_file }}"
+    name: "bws"
+  when: use_bws
+
+- name: "Set fact"
+  ansible.builtin.set_fact:
+    secrets: '{{ lookup("community.general.bitwarden_secrets_manager", bws.bws_semaphore_id, bws_access_token=bws.bws_token).value | from_json }}'
+  when: use_bws
+
+- name: "Overwrite vars"
+  ansible.builtin.set_fact:
+    semaphore_admin_password: "{{ secrets.semaphore_admin_password }}"
+    semaphore_access_key_encryption: "{{ secrets.semaphore_access_key_encryption }}"
+  when: use_bws
+
 - name: "Create directories"
   file:
     path: "{{ item }}"
@@ -28,17 +45,17 @@
   containers.podman.podman_container:
     pod: "semaphore-pod"
     name: "semaphore-postgres"
-    image: "docker.io/library/postgres:{{ postgres_version }}"
+    image: "docker.io/library/postgres:{{ semaphore_postgres_version }}"
     recreate: no
     restart_policy: "no"
     tty: no
     detach: yes
     state: "started"
     env:
-      POSTGRES_PASSWORD: "{{ postgres_password }}"
+      POSTGRES_PASSWORD: "{{ semaphore_postgres_password }}"
       PGDATA: "/var/lib/postgresql/data"
-      POSTGRES_USER: "{{ postgres_username }}"
-      POSTGRES_DB: "{{ postgres_database }}"
+      POSTGRES_USER: "{{ semaphore_postgres_username }}"
+      POSTGRES_DB: "{{ semaphore_postgres_database }}"
     volumes:
       - "{{ base_dir}}/semaphore/pg_data:/var/lib/postgresql/data:rw,Z"
 
@@ -46,7 +63,7 @@
   containers.podman.podman_container:
     pod: "semaphore-pod"
     name: "semaphore-ui"
-    image: "docker.io/semaphoreui/semaphore:{{ version_tag }}"
+    image: "docker.io/semaphoreui/semaphore:{{ semaphore_version_tag }}"
     recreate: no
     restart_policy: "no"
     tty: no
