@@ -1,7 +1,7 @@
 ---
 # defaults file for ansible-role-semaphore-podman
 
-semaphore_version_tag: "v2.9.37"
+semaphore_version_tag: "v2.9.45"
 base_dir: "."
 
 semaphore_port: "3000"
